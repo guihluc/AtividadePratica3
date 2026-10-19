@@ -217,24 +217,27 @@ a estratégia de idiomas, nenhum texto de mensagem pode aparecer em `Level.java`
 
 | Item | Classe adicionada | Quais OUTROS arquivos você precisou abrir e editar? |
 |---|---|---|
-| 1 | `GUIRenderer` | |
-| 2 | `ButtonInputs` | |
-| 3 | `VirtualJoystickInput` | |
+| 1 | `GUIRenderer` | `RendererEnum.java`, `RendererFactory.java` |
+| 2 | `ButtonInputs` | `InputsEnum.java`, `InputsFactory.java` |
+| 3 | `VirtualJoystickInput` | `InputsEnum.java`, `InputsFactory.java` |
 
 **2.** Antes de adicionar cada classe, você rodou o jogo pedindo o modo que ainda não
 existia. Qual foi a mensagem de erro, e de qual arquivo ela veio?
 
->
+> Todas vieram como `IllegalArgumentException`, lançada por `InputsEnum.java` ou `RendererEnum.java`, pois o valor pedido ainda não existia no enum:
+> - `-r gui`: `Renderer must be gui or terminal: gui` (`RendererEnum.java`)
+> - `-i buttons`: `Mode must be buttons, joystick, or keyboard: buttons` (`InputsEnum.java`)
+> - `-i joystick`: `Mode must be buttons, joystick, or keyboard: joystick` (`InputsEnum.java`)
 
 **3.** Depois de copiar a classe para dentro de `src/`, o projeto ainda não compilava.
 Qual foi o erro do compilador, e por que ele aconteceu?
 
->
+> O compilador informou que a expressão `switch` não cobria todos os valores possíveis. Isso ocorreu porque foram adicionados novos valores aos enums antes dos respectivos casos nas factories: `InputsFactory` precisava tratar `BUTTONS` e `JOYSTICK`, e `RendererFactory` precisava tratar `GUI`.
 
 **4.** `Level.java` aparece em alguma linha da tabela do item 1? Por que isso é o
 resultado esperado de um projeto com baixo acoplamento?
 
->
+> Não. `Level` depende apenas das interfaces `IInputs` e `IRenderer`, sem conhecer as classes concretas. Por isso, novas implementações só exigem mudanças nos enums e nas factories, que escolhem e criam as peças.
 
 ## Item 4 — pares cruzados
 
