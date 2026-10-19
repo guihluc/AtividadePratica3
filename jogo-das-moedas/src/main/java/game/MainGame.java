@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import game.enums.InputsEnum;
+import game.enums.LanguageEnum;
 import game.enums.RendererEnum;
 import game.inputs.IInputs;
 import game.inputs.InputsFactory;
+import game.language.ILanguage;
+import game.language.LanguageFactory;
 import game.ui.IRenderer;
 import game.ui.RendererFactory;
 import game.utils.LevelLoader;
@@ -39,8 +42,9 @@ public class MainGame {
             throw new IllegalArgumentException(
                 "Level must be between 1 and " + grids.size() + ".");
 
-        IInputs input = new InputsFactory().create(options.inputMode());
-        IRenderer renderer = new RendererFactory().create(options.rendererMode());
+        ILanguage language = new LanguageFactory().create(options.languageMode());
+        IInputs input = new InputsFactory(language).create(options.inputMode());
+        IRenderer renderer = new RendererFactory(language).create(options.rendererMode());
 
         Progress progress = new Progress();
 
@@ -52,18 +56,19 @@ public class MainGame {
             for (int[] position : grid.getCoinPositions())
                 coins.add(new Coin(position[0], position[1], 10));
 
-            Level level = new Level(grid, player, progress, coins, input, renderer);
+            Level level = new Level(grid, player, progress, coins, input, renderer, language);
             if (!level.run()) {
-                renderer.showMessage("Final score: " + progress.getScore());
+                language.showFinalScore(renderer, progress.getScore());
                 return;
             }
         }
-        renderer.showMessage("FIM DE JOGO - Score: " + progress.getScore());
+        language.showGameOver(renderer, progress.getScore());
     }
 
     private static LaunchOptions loadInput(String[] args) {
         InputsEnum inputMode = null;
         RendererEnum rendererMode = null;
+        LanguageEnum languageMode = null;
         int levelNumber = 1;
 
         for (int index = 0; index < args.length; index++) {
@@ -83,14 +88,20 @@ public class MainGame {
                         throw new IllegalArgumentException("Missing value for -l.");
                     levelNumber = Integer.parseInt(args[index]);
                 }
+                case "-lang" -> {
+                    if (++index >= args.length)
+                        throw new IllegalArgumentException("Missing value for -lang.");
+                    languageMode = LanguageEnum.from(args[index]);
+                }
                 default -> throw new IllegalArgumentException(
-                    "Unknown option: " + args[index] + ". Use -i, -r, or -l.");
+                    "Unknown option: " + args[index] + ". Use -i, -r, -l, or -lang.");
             }
         }
 
         return new LaunchOptions(
             inputMode == null ? InputsEnum.from() : inputMode,
             rendererMode == null ? RendererEnum.from() : rendererMode,
+            languageMode == null ? LanguageEnum.from() : languageMode,
             levelNumber
         );
     }
@@ -98,6 +109,7 @@ public class MainGame {
     private record LaunchOptions(
         InputsEnum inputMode,
         RendererEnum rendererMode,
+        LanguageEnum languageMode,
         int levelNumber
     ) {}
 }

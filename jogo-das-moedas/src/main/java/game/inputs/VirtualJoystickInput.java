@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import game.enums.CommandsEnum;
+import game.language.ILanguage;
 
 /**
  * Joystick virtual controlado pelo mouse.
@@ -34,10 +35,10 @@ public class VirtualJoystickInput implements IInputs {
     private final JFrame frame;
     private final JoystickPanel panel;
 
-    public VirtualJoystickInput() {
+    public VirtualJoystickInput(ILanguage language) {
         lastMoveAtNanos = System.nanoTime() - MOVE_INTERVAL_NANOS;
         this.panel = new JoystickPanel();
-        this.frame = new JFrame("Virtual Joystick");
+        this.frame = new JFrame(language.getJoystickTitle());
         frame.add(panel);
         frame.pack();
         frame.setLocationByPlatform(true);

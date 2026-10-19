@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 
 import game.enums.CommandsEnum;
+import game.language.ILanguage;
 
 /**
  * Traduz cliques em botoes de uma janela grafica em comandos do jogo.
@@ -27,20 +28,20 @@ public class ButtonInputs implements IInputs {
     private final BlockingQueue<CommandsEnum> commands = new LinkedBlockingQueue<>();
     private final JFrame frame;
 
-    public ButtonInputs() {
-        this.frame = new JFrame("Controles");
+    public ButtonInputs(ILanguage language) {
+        this.frame = new JFrame(language.getControlsTitle());
         frame.setLayout(new GridLayout(3, 3, 4, 4));
 
         frame.add(new JLabel());
-        frame.add(button("Cima", CommandsEnum.UP));
+        frame.add(button(language.getUpLabel(), CommandsEnum.UP));
         frame.add(new JLabel());
 
-        frame.add(button("Esquerda", CommandsEnum.LEFT));
-        frame.add(button("Sair", CommandsEnum.EXIT));
-        frame.add(button("Direita", CommandsEnum.RIGHT));
+        frame.add(button(language.getLeftLabel(), CommandsEnum.LEFT));
+        frame.add(button(language.getExitLabel(), CommandsEnum.EXIT));
+        frame.add(button(language.getRightLabel(), CommandsEnum.RIGHT));
 
         frame.add(new JLabel());
-        frame.add(button("Baixo", CommandsEnum.DOWN));
+        frame.add(button(language.getDownLabel(), CommandsEnum.DOWN));
         frame.add(new JLabel());
 
         frame.pack();

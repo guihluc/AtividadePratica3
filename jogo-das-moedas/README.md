@@ -257,55 +257,72 @@ resultado esperado de um projeto com baixo acoplamento?
 
 **7.** Liste os arquivos que você **criou**:
 
->
+> Todos em `src/main/java/game/`:
+> - `enums/LanguageEnum.java`
+> - `language/ILanguage.java`
+> - `language/English.java`
+> - `language/Portuguese.java`
+> - `language/Spanish.java`
+> - `language/LanguageFactory.java`
 
 **8.** Liste os arquivos que você **modificou** e diga, em uma linha cada, o que mudou:
 
+> - `MainGame.java`: nova opção `-lang` (padrão inglês), cria o idioma pela `LanguageFactory`, passa-o às factories e ao `Level`, e usa-o nas mensagens finais.
+> - `Level.java`: recebe `ILanguage` pelo construtor e troca todos os textos por chamadas ao idioma.
+> - `ui/TerminalRenderer.java`: recebe `ILanguage` e obtém dele o texto do score e o prompt de comando.
+> - `ui/GUIRenderer.java`: recebe `ILanguage` e obtém dele o título da janela e o texto do score.
+> - `ui/RendererFactory.java`: recebe `ILanguage` no construtor e o repassa aos renderers.
+> - `inputs/ButtonInputs.java`: recebe `ILanguage` e obtém dele o título da janela e os rótulos dos botões.
+> - `inputs/VirtualJoystickInput.java`: recebe `ILanguage` e obtém dele o título da janela.
+> - `inputs/InputsFactory.java`: recebe `ILanguage` no construtor e o repassa às entradas que o usam.
 >
+> `IInputs`, `IRenderer` e `IFactory` **não** foram alterados. Também não alterei `Grid`, `Progress`, `GameObject`, `Player`, `Coin`, `CommandsEnum` nem `LevelLoader`.
 
 **9.** `ILanguage` ficou como **interface** ou como **classe abstrata**? Justifique usando
 o mesmo critério da tabela da seção "Interface para contrato, classe abstrata para reúso".
 
->
+> **Interface.** Inglês, português e espanhol não têm **nenhum código em comum**: cada classe só conhece suas próprias frases. Não há estado nem lógica a herdar, só um contrato a cumprir. Uma classe abstrata com o campo `IRenderer renderer` criaria um estado compartilhado artificial e prenderia o idioma a um renderer específico, enquanto aqui o renderer chega como parâmetro de cada método.
 
 **10.** Por que os métodos de `ILanguage` recebem **dados** (como o valor do score) em vez
 de receberem o texto pronto? O que aconteceria com o design se `Level` montasse a frase e
 passasse a `String` para a classe de idioma?
 
->
+> Porque a ordem das palavras e a pontuação variam entre idiomas, e só a classe do idioma sabe montar a frase corretamente. Se `Level` montasse o texto, ele voltaria a conter frases em um idioma fixo, e a classe de idioma seria só um repasse de `String`. Isso espalharia texto pelas classes de regra, quebraria a coesão de `Level` e exigiria alterá-lo para cada idioma novo.
 
 **11.** Rode `grep -n "new \|System.out" src/main/java/game/Level.java` e também procure
 por texto literal entre aspas em `Level.java`. Sobrou alguma mensagem? Se sim, qual e por quê?
 
->
+> O `grep` não devolve nada. Na busca por texto entre aspas, a única ocorrência é o comentário de documentação (`"new"`, linha 21), que não é mensagem exibida. Nenhuma mensagem sobrou em `Level.java`.
 
 **12.** Quantos arquivos você precisaria modificar para adicionar um **quarto idioma**
 (por exemplo, francês)? Liste-os.
 
->
+> Dois arquivos modificados, além de um novo: criar `language/French.java`, adicionar `FRENCH` em `enums/LanguageEnum.java` e adicionar o `case` em `language/LanguageFactory.java`. Nenhuma classe de regra ou de interface muda.
 
 **13.** `KeyboardInput.getDeviceName()` devolve `"Keyboard"`, que aparece na tela.
 Esse texto **deve** ser traduzido? Não existe resposta única aqui — defenda a sua.
 
->
+> Não o traduzi. É o nome do dispositivo, um identificador técnico que `IInputs` devolve apenas como dado para a mensagem de início. A frase em volta dele é traduzida pelo idioma, e o nome do dispositivo é inserido nela. Traduzi-lo exigiria que as classes de entrada conhecessem o idioma, aumentando o acoplamento por pouco ganho. Já os títulos de janela e rótulos de botões, que são texto de interface, foram traduzidos.
 
 ## Item 6 — diagrama UML
 
 **14.** Com que ferramenta você fez o diagrama?
 
->
+> O diagrama foi gerado com auxílio da ferramente de IA claude, exportado como imagem PNG com o Mermaid CLI. O código-fonte está em [diagrama-uml.mmd](./diagrama-uml.mmd).
+
+![Diagrama UML](./diagrama-uml.png)
 
 **15.** Confirme: o diagrama mostra **apenas** herança (generalização) e implementação de
-interface (realização), sem associações entre classes?  `[ ] sim`
+interface (realização), sem associações entre classes?  `[x] sim`
 
 ## Fechamento
 
 **16.** Compare com a v1 mostrada em aula: quantos arquivos mudam lá, e quantos mudam
 aqui, para adicionar uma entrada nova? O que explica a diferença?
 
->
+> Na v1, a escolha do dispositivo ficava espalhada dentro da própria classe de regras (`Game`), ligada a classes concretas. Adicionar uma entrada exigia criar a nova classe e **editar a classe de regras** (`Game`), pelo menos 2 arquivos, com risco de quebrar as regras. Aqui são 3 arquivos, mas só 1 é lógica nova: criar a classe da entrada, adicionar o valor em `InputsEnum` e o `case` em `InputsFactory`. `Level`, `MainGame`, `Player`, `Grid` e as demais classes de regra não mudam. A diferença se explica porque `Level` depende só de `IInputs` e recebe a implementação por injeção de dependência, e a escolha do concreto fica concentrada em enum e factory.
 
 **17.** Alguma parte do projeto que você achou **mais acoplada do que precisava**?
 Crítica honesta conta ponto — aponte o lugar e diga o que faria.
 
->
+> MainGame faz muita coisa. Lê argumentos, monta as peças e controla o laço das fases. Eu extrairia a leitura de argumentos para uma classe própria, o que deixaria MainGame só como montagem.

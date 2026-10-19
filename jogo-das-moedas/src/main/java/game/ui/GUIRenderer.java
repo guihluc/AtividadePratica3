@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import game.language.ILanguage;
 import game.world.Grid;
 import game.world.Progress;
 import game.world.gobjects.Coin;
@@ -35,19 +36,21 @@ public class GUIRenderer extends JPanel implements IRenderer {
 
     private final JFrame frame;
     private final JLabel messageLabel;
+    private final ILanguage language;
     private Grid grid;
     private Player player;
     private Progress progress;
     private List<Coin> coins;
 
-    public GUIRenderer() {
+    public GUIRenderer(ILanguage language) {
+        this.language = language;
         this.messageLabel = new JLabel(" ");
         messageLabel.setFont(messageLabel.getFont().deriveFont(Font.BOLD, 14f));
 
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(8 * CELL_SIZE, 6 * CELL_SIZE + 24));
 
-        this.frame = new JFrame("Jogo das Moedas");
+        this.frame = new JFrame(language.getGameTitle());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
         frame.add(messageLabel, BorderLayout.SOUTH);
@@ -106,6 +109,6 @@ public class GUIRenderer extends JPanel implements IRenderer {
         g.fillRect(player.getX() * CELL_SIZE + 4, player.getY() * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8);
 
         g.setColor(Color.WHITE);
-        g.drawString("Score: " + progress.getScore(), 4, grid.getHeight() * CELL_SIZE + 18);
+        g.drawString(language.getScoreText(progress.getScore()), 4, grid.getHeight() * CELL_SIZE + 18);
     }
 }

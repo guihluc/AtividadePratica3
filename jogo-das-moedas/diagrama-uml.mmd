@@ -1,0 +1,50 @@
+classDiagram
+    direction TB
+
+    class IInputs {
+        <<interface>>
+    }
+    class KeyboardInput
+    class ButtonInputs
+    class VirtualJoystickInput
+    IInputs <|.. KeyboardInput
+    IInputs <|.. ButtonInputs
+    IInputs <|.. VirtualJoystickInput
+
+    class IRenderer {
+        <<interface>>
+    }
+    class TerminalRenderer
+    class GUIRenderer
+    class JPanel
+    IRenderer <|.. TerminalRenderer
+    IRenderer <|.. GUIRenderer
+    JPanel <|-- GUIRenderer
+
+    class ILanguage {
+        <<interface>>
+    }
+    class English
+    class Portuguese
+    class Spanish
+    ILanguage <|.. English
+    ILanguage <|.. Portuguese
+    ILanguage <|.. Spanish
+
+    class IFactory~E, K~ {
+        <<interface>>
+    }
+    class InputsFactory
+    class RendererFactory
+    class LanguageFactory
+    IFactory <|.. InputsFactory
+    IFactory <|.. RendererFactory
+    IFactory <|.. LanguageFactory
+
+    class GameObject {
+        <<abstract>>
+    }
+    class Player
+    class Coin
+    GameObject <|-- Player
+    GameObject <|-- Coin
