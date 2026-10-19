@@ -201,15 +201,15 @@ a estratégia de idiomas, nenhum texto de mensagem pode aparecer em `Level.java`
 
 | | Nome completo | Matrícula |
 |---|---|---|
-| Integrante 1 | | |
+| Integrante 1 | Luis Guilherme Lucas Barreto | 20250030776 |
 | Integrante 2 | *(deixe em branco se fez individualmente)* | |
 
 ## Ambiente
 
-- **Versão do JDK** (saída de `java -version`):
-- **Sistema operacional**:
-- **Comando de compilação que você usou**:
-- **Comando de execução que você usou**:
+- **Versão do JDK** (saída de `java -version`): OpenJDK 25.0.4.1 (Temurin-25.0.4.1+1 LTS, build 2026-08-18)
+- **Sistema operacional**: Windows
+- **Comando de compilação que você usou**: `$files = Get-ChildItem src\main\java -Recurse -Filter *.java | ForEach-Object FullName; javac -d bin $files` (PowerShell; no Linux/macOS: `javac -d bin $(find src/main/java -name "*.java")`)
+- **Comando de execução que você usou**: `java -cp bin game.MainGame` (ex.: `java -cp bin game.MainGame -i buttons -r gui -lang spanish`)
 
 ## Itens 1 a 3 — as três classes devolvidas
 
