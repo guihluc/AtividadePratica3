@@ -245,12 +245,13 @@ resultado esperado de um projeto com baixo acoplamento?
 
 | Combinação | Funcionou? | Precisou alterar alguma classe? |
 |---|---|---|
-| `-i buttons -r terminal` | | |
-| `-i keyboard -r gui` | | |
+| `-i buttons -r terminal` | Sim. O jogo desenha no console e os botões da janela controlam o jogador. | Não |
+| `-i keyboard -r gui` | Sim. O jogo desenha na janela gráfica e o teclado controla o jogador, digitando `w`, `a`, `s`, `d` ou `q` + Enter **no terminal**, pois `KeyboardInput` lê do console e não da janela. | Não |
+| `-i joystick -r terminal` | Sim. O jogo desenha no console e o mouse no joystick virtual controla o jogador. | Não |
 
 **6.** O que essas duas execuções provam sobre a relação entre entrada e saída no projeto?
 
->
+> Provam que entrada e saída são independentes: qualquer entrada funciona com qualquer renderer, sem alterar nenhuma classe. `Level` conhece apenas as interfaces `IInputs` e `IRenderer`, e `MainGame` escolhe, por meio das factories, qual implementação concreta usar para cada lado. O acoplamento entre entrada e saída é, portanto, baixo.
 
 ## Item 5 — a estratégia de idiomas
 
